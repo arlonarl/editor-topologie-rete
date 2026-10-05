@@ -1,0 +1,274 @@
+:host {
+	display: block;
+	width: 100%;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--border-color, #cbd5e1);
+	margin-bottom: 0;
+  }
+  
+  .topology-name-field input,
+  .persistence-controls select {
+	border: 1px solid var(--border-color, #cbd5e1);
+	border-radius: var(--radius-md, 8px);
+	color: var(--text-main, #0f172a);
+	font-weight: 500;
+	transition: border-color 0.2s;
+  }
+  
+  .topology-name-field input:focus,
+  .persistence-controls select:focus {
+	outline: none;
+	border-color: var(--primary, #2563eb);
+	background: var(--bg-panel, #ffffff);
+  }
+  
+  .persistence-controls select {
+	cursor: pointer;
+  }
+  
+  .tool-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 40px;
+	padding: 8px 16px;
+	border: 1px solid var(--border-color, #cbd5e1);
+	border-radius: var(--radius-md, 8px);
+	background: var(--bg-panel, #ffffff);
+	color: var(--text-main, #0f172a);
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+  }
+  
+  .tool-button:hover:not(:disabled) {
+	background: var(--bg-app, #f1f5f9);
+  }
+  
+  .primary-button {
+	background: var(--primary, #2563eb);
+	border-color: var(--primary, #2563eb);
+	color: white;
+  }
+  
+  .primary-button:hover:not(:disabled) {
+	background: var(--primary-hover, #1d4ed8);
+	color: white;
+  }
+
+  .tool-button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+  }
+
+  .delete-button {
+	color: var(--danger, #ef4444);
+	border-color: transparent;
+	background: transparent;
+  }
+
+  .delete-button:hover:not(:disabled) {
+	color: #b91c1c;
+	border-color: var(--danger, #ef4444);
+	background: var(--danger-hover, #fef2f2);
+  }
+
+  .persistence-error {
+	margin: 8px 0 0;
+	padding: 10px 12px;
+	border-left: 4px solid var(--danger, #ef4444);
+	border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+	background: var(--danger-hover, #fef2f2);
+	color: #991b1b;
+	font-size: 13px;
+  }
+
+  /* Conferma visiva delle operazioni completate con successo, coerente con il pannello dettagli. */
+  .persistence-success {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 8px 0 0;
+	padding: 10px 12px;
+	border-left: 4px solid var(--success, #10b981);
+	border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+	background: var(--success-light, #ecfdf5);
+	color: #065f46;
+	font-size: 13px;
+	font-weight: 600;
+  }
+
+  .persistence-success i {
+	font-size: 16px;
+	line-height: 1;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+	outline: 3px solid var(--primary, #2563eb);
+	outline-offset: 2px;
+  }
+
+  .persistence-controls {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: end;
+	gap: 8px 12px;
+  }
+
+  .persistence-fields {
+	display: grid;
+	grid-template-columns: minmax(150px, 0.8fr) minmax(180px, 1fr);
+	gap: 8px;
+	min-width: 0;
+  }
+
+  .topology-name-field,
+  .saved-topology-field {
+	display: grid;
+	gap: 5px;
+	min-width: 0;
+  }
+
+  .topology-name-field span,
+  .saved-topology-field span {
+	color: var(--text-muted);
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0;
+  }
+
+  .topology-name-field input,
+  .persistence-controls select {
+	width: 100%;
+	min-width: 0;
+	min-height: 34px;
+	padding: 5px 8px;
+	border-radius: 6px;
+	background: var(--bg-panel);
+	font: inherit;
+	font-size: 12px;
+  }
+
+  .persistence-actions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+  }
+
+  .persistence-actions .tool-button {
+	min-height: 34px;
+	padding: 5px 8px;
+	font-size: 12px;
+  }
+
+  .persistence-actions .icon-action {
+	width: 34px;
+	padding: 0;
+  }
+
+  .persistence-actions .icon-action i {
+	display: inline-block;
+  }
+
+  .persistence-actions .icon-action i.refreshing {
+	animation: refresh-spin 0.8s linear infinite;
+  }
+
+  @keyframes refresh-spin {
+	to { transform: rotate(360deg); }
+  }
+
+  .json-menu {
+	position: relative;
+  }
+
+  .json-menu summary {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	list-style: none;
+  }
+
+  .json-menu summary::-webkit-details-marker {
+	display: none;
+  }
+
+  .menu-chevron {
+	font-size: 10px;
+  }
+
+  .json-menu[open] .menu-chevron {
+	transform: rotate(180deg);
+  }
+
+  .json-menu-items {
+	position: absolute;
+	top: calc(100% + 6px);
+	right: 0;
+	z-index: 5;
+	display: grid;
+	min-width: 160px;
+	padding: 4px;
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	background: var(--bg-panel);
+	box-shadow: var(--shadow-md);
+  }
+
+  .json-menu-items button {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	min-height: 36px;
+	padding: 7px 9px;
+	border: 0;
+	border-radius: 4px;
+	background: transparent;
+	color: var(--text-main);
+	font: inherit;
+	font-size: 13px;
+	text-align: left;
+	cursor: pointer;
+  }
+
+  .json-menu-items button:hover:not(:disabled) {
+	background: var(--bg-app);
+  }
+
+  .json-menu-items button:disabled {
+	cursor: not-allowed;
+	opacity: 0.55;
+  }
+
+  .persistence-actions .primary-button {
+	min-width: 90px;
+  }
+
+  @media (max-width: 900px) {
+	.persistence-controls {
+	  grid-template-columns: minmax(0, 1fr);
+	}
+
+	.persistence-fields {
+	  grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.persistence-actions {
+	  justify-content: flex-start;
+	}
+  }
+
+  @media (max-width: 560px) {
+	.persistence-fields {
+	  grid-template-columns: minmax(0, 1fr);
+	}
+
+	.persistence-actions {
+	  flex-wrap: wrap;
+	}
+  }

@@ -1,0 +1,75 @@
+<div class="persistence-controls" role="group" aria-label="Gestione della persistenza delle topologie">
+	<div class="persistence-fields">
+		<label class="topology-name-field">
+			<span>Nome</span>
+			<input
+				type="text"
+				[value]="topologyName()"
+				(input)="onNameInput($event)"
+				maxlength="100"
+				aria-label="Nome della topologia"
+				[disabled]="isLoading()"
+			/>
+		</label>
+
+		<label class="saved-topology-field">
+			<span>Topologie salvate</span>
+			<select aria-label="Carica una topologia" (change)="onTopologySelect($event)" [disabled]="isLoading()">
+				<option value="">Seleziona una topologia...</option>
+				@for (topology of topologies(); track topology.id) {
+					<option [value]="topology.id" [selected]="topology.id === currentTopologyId()">
+						{{ topology.name }}
+					</option>
+				}
+			</select>
+		</label>
+	</div>
+
+	<div class="persistence-actions" role="group" aria-label="Azioni topologia">
+		<button type="button" class="tool-button icon-action" data-action="refresh-topologies" (click)="refresh.emit()" [disabled]="isLoading() || isRefreshingTopologies()" [attr.aria-label]="isRefreshingTopologies() ? 'Aggiornamento elenco in corso' : 'Aggiorna elenco'" [attr.title]="isRefreshingTopologies() ? 'Aggiornamento in corso…' : 'Aggiorna elenco'">
+			<i class="bi bi-arrow-clockwise" [class.refreshing]="isRefreshingTopologies()" aria-hidden="true"></i>
+		</button>
+		<button type="button" class="tool-button" data-action="new-topology" (click)="createNew.emit()" [disabled]="isLoading()">
+			<i class="bi bi-file-earmark-plus" aria-hidden="true"></i>
+			Nuova
+		</button>
+		<details #jsonMenu class="json-menu" (click)="$event.stopPropagation()">
+			<summary class="tool-button" aria-label="Importa o esporta JSON">
+				<i class="bi bi-filetype-json" aria-hidden="true"></i>
+				JSON
+				<i class="bi bi-chevron-down menu-chevron" aria-hidden="true"></i>
+			</summary>
+			<div class="json-menu-items">
+				<button type="button" data-action="export-json" (click)="onExportJson()">
+					<i class="bi bi-download" aria-hidden="true"></i>
+					Esporta file
+				</button>
+				<input #importInput type="file" accept=".json,application/json" hidden (change)="onImportFile($event)" />
+				<button type="button" data-action="import-json" (click)="importInput.click()" [disabled]="isLoading()">
+					<i class="bi bi-upload" aria-hidden="true"></i>
+					Importa file
+				</button>
+			</div>
+		</details>
+		<button type="button" class="tool-button primary-button" data-action="save-topology" (click)="onSave()" [disabled]="isLoading()">
+			<i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+			Salva
+		</button>
+		@if (currentTopologyId() !== null) {
+			<button type="button" class="tool-button delete-button icon-action" data-action="delete-topology" (click)="onDelete()" [disabled]="isLoading()" aria-label="Elimina topologia" title="Elimina topologia">
+				<i class="bi bi-trash3" aria-hidden="true"></i>
+			</button>
+		}
+	</div>
+</div>
+
+@if (error(); as message) {
+	<p class="persistence-error" role="alert">{{ message }}</p>
+}
+
+@if (success(); as message) {
+	<p class="persistence-success" role="status">
+		<i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+		<span>{{ message }}</span>
+	</p>
+}

@@ -1,0 +1,112 @@
+{
+  "name": "Rete aziendale - con connessioni inattive",
+  "devices": [
+    {
+      "id": 1,
+      "name": "Main Router",
+      "x": 600,
+      "y": 90,
+      "status": "Online",
+      "type": "Router",
+      "ip": "192.168.1.1",
+      "hostname": "router-main",
+      "model": "Cisco ISR 4331"
+    },
+    {
+      "id": 2,
+      "name": "Switch-2",
+      "x": 600,
+      "y": 240,
+      "status": "Online",
+      "type": "Switch",
+      "portCount": 24,
+      "model": "Cisco Catalyst 2960"
+    },
+    {
+      "id": 3,
+      "name": "Switch-3",
+      "x": 950,
+      "y": 240,
+      "status": "Offline",
+      "type": "Switch",
+      "portCount": 8,
+      "model": "TP-Link TL-SG108"
+    },
+    {
+      "id": 4,
+      "name": "PC Segreteria",
+      "x": 420,
+      "y": 400,
+      "status": "Online",
+      "type": "PC",
+      "ip": "192.168.1.10",
+      "hostname": "pc-segreteria",
+      "operatingSystem": "Windows 11"
+    },
+    {
+      "id": 5,
+      "name": "PC Amministrazione",
+      "x": 640,
+      "y": 400,
+      "status": "Online",
+      "type": "PC",
+      "ip": "192.168.1.11",
+      "hostname": "pc-amministrazione",
+      "operatingSystem": "Ubuntu 24.04"
+    },
+    {
+      "id": 6,
+      "name": "PC Lab 1",
+      "x": 870,
+      "y": 400,
+      "status": "Online",
+      "type": "PC",
+      "ip": "192.168.1.20",
+      "hostname": "pc-laboratorio-1",
+      "operatingSystem": "Windows 10"
+    },
+    {
+      "id": 7,
+      "name": "PC Lab 2",
+      "x": 1040,
+      "y": 400,
+      "status": "Online",
+      "type": "PC",
+      "ip": "192.168.1.21",
+      "hostname": "pc-laboratorio-2",
+      "operatingSystem": "Ubuntu 22.04"
+    }
+  ],
+  "connections": [
+    {
+      "id": 1,
+      "sourceId": 1,
+      "targetId": 2
+    },
+    {
+      "id": 2,
+      "sourceId": 1,
+      "targetId": 3
+    },
+    {
+      "id": 3,
+      "sourceId": 2,
+      "targetId": 4
+    },
+    {
+      "id": 4,
+      "sourceId": 2,
+      "targetId": 5
+    },
+    {
+      "id": 5,
+      "sourceId": 3,
+      "targetId": 6
+    },
+    {
+      "id": 6,
+      "sourceId": 3,
+      "targetId": 7
+    }
+  ]
+}

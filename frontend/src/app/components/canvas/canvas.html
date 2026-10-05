@@ -1,0 +1,244 @@
+<section class="topology-editor" aria-label="Editor della topologia di rete">
+  <header class="toolbar">
+    <app-topology-persistence-toolbar
+      [topologies]="topologies()"
+      [currentTopologyId]="currentTopologyId()"
+      [topologyName]="topologyName()"
+      [isLoading]="isLoading()"
+      [isRefreshingTopologies]="isRefreshingTopologies()"
+      [success]="topologySuccess()"
+      [error]="importError() || topologyError()"
+      (nameChange)="updateTopologyName($event)"
+      (refresh)="refreshTopologies()"
+      (createNew)="startNewTopology()"
+      (load)="loadSelectedTopology($event)"
+      (save)="saveCurrentTopology($event)"
+      (deleteTopology)="deleteCurrentTopology()"
+      (exportJson)="downloadTopologyJson()"
+      (importJson)="importTopologyFile($event)"
+    />
+
+    <div class="toolbar-tools-row">
+      <section class="toolbar-section">
+        <span class="toolbar-section-label">Dispositivi</span>
+        <div class="toolbar-group" role="group" aria-label="Aggiungi dispositivo">
+        <button type="button" class="tool-button" data-action="add-pc" (click)="selectDeviceType('PC')">
+          <i class="bi bi-pc-display" aria-hidden="true"></i>
+          PC
+        </button>
+        <button type="button" class="tool-button" data-action="add-switch" (click)="selectDeviceType('Switch')">
+          <i class="bi bi-diagram-3" aria-hidden="true"></i>
+          Switch
+        </button>
+        <button type="button" class="tool-button" data-action="add-router" (click)="selectDeviceType('Router')">
+          <i class="bi bi-router" aria-hidden="true"></i>
+          Router
+        </button>
+        </div>
+      </section>
+
+      <section class="toolbar-section">
+        <span class="toolbar-section-label">Modalità</span>
+        <div class="toolbar-group mode-toggle" role="group" aria-label="Modalità di interazione">
+        <button
+          type="button"
+          class="tool-button"
+          data-mode="edit"
+          [class.active]="mode() === 'edit'"
+          [attr.aria-pressed]="mode() === 'edit'"
+          (click)="setMode('edit')"
+        >
+          <i class="bi bi-arrow-up-left" aria-hidden="true"></i>
+          Modifica
+        </button>
+        <button
+          type="button"
+          class="tool-button"
+          data-mode="connect"
+          [class.active]="mode() === 'connect'"
+          [attr.aria-pressed]="mode() === 'connect'"
+          (click)="setMode('connect')"
+        >
+          <i class="bi bi-bezier2" aria-hidden="true"></i>
+          Collega
+        </button>
+        <button
+          type="button"
+          class="tool-button"
+          data-mode="pan"
+          [class.active]="mode() === 'pan'"
+          [attr.aria-pressed]="mode() === 'pan'"
+          (click)="setMode('pan')"
+        >
+          <i class="bi bi-arrows-move" aria-hidden="true"></i>
+          Sposta vista
+        </button>
+        </div>
+      </section>
+
+      <section class="toolbar-section view-section">
+        <span class="toolbar-section-label">Vista</span>
+        <div class="toolbar-group zoom-controls" role="group" aria-label="Zoom dell'area di lavoro">
+        <button type="button" class="tool-button" aria-label="Riduci zoom" (click)="zoomOut()">
+          <i class="bi bi-zoom-out" aria-hidden="true"></i>
+        </button>
+        <span class="zoom-value" aria-live="polite">{{ zoomPercentage() }}%</span>
+        <button type="button" class="tool-button" aria-label="Aumenta zoom" (click)="zoomIn()">
+          <i class="bi bi-zoom-in" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="tool-button" (click)="resetView()">Reset vista</button>
+        </div>
+      </section>
+
+      <div class="toolbar-status" aria-live="polite">
+        @if (pendingDeviceType(); as deviceType) {
+          Posiziona {{ deviceType }} nel punto desiderato
+        } @else if (mode() === 'connect') {
+          {{ connectionSourceId() === null ? 'Seleziona il dispositivo sorgente' : 'Seleziona il dispositivo destinazione' }}
+        } @else if (mode() === 'pan') {
+          Trascina lo sfondo per spostare la vista
+        }
+      </div>
+
+      <div class="toolbar-actions">
+        <button
+          type="button"
+          class="tool-button delete-button"
+          data-action="clear-canvas"
+          [disabled]="devices().length === 0"
+          (click)="clearCanvas()"
+        >
+          <i class="bi bi-trash3" aria-hidden="true"></i>
+          Pulisci canvas
+        </button>
+
+        @if (selectedDevice()) {
+          <button type="button" class="tool-button delete-button" (click)="removeSelectedDevice()">
+            <i class="bi bi-trash3" aria-hidden="true"></i>
+            Elimina
+          </button>
+        }
+        
+        @if (selectedConnectionId() !== null) {
+          <button type="button" class="tool-button delete-button" data-action="remove-connection" (click)="removeSelectedConnection()">
+            <i class="bi bi-trash3" aria-hidden="true"></i>
+            Elimina connessione
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  @if (connectionError(); as error) {
+    <p class="connection-error" role="alert">{{ error }}</p>
+  }
+
+  <div class="editor-layout" [class.has-details]="detailDevice() !== null">
+    <section class="canvas-workspace" aria-label="Area di lavoro della topologia">
+      <div
+        class="canvas-container"
+        #canvasArea
+        [class.connect-mode]="mode() === 'connect'"
+        [class.pan-mode]="mode() === 'pan'"
+        [class.pan-active]="isPanning()"
+        [class.placement-mode]="pendingDeviceType() !== null"
+        (pointerdown)="onCanvasPointerDown($event)"
+        (wheel)="onCanvasWheel($event)"
+        (click)="onCanvasClick($event)"
+      >
+        @if (placementMenu(); as menu) {
+          <div
+            class="device-type-menu"
+            role="group"
+            aria-label="Scegli il dispositivo da inserire"
+            [style.left.px]="menu.left"
+            [style.top.px]="menu.top"
+            (click)="$event.stopPropagation()"
+          >
+            <button type="button" data-action="place-pc" (click)="placeDeviceAt('PC')">
+              <i class="bi bi-pc-display" aria-hidden="true"></i>
+              PC
+            </button>
+            <button type="button" data-action="place-switch" (click)="placeDeviceAt('Switch')">
+              <i class="bi bi-diagram-3" aria-hidden="true"></i>
+              Switch
+            </button>
+            <button type="button" data-action="place-router" (click)="placeDeviceAt('Router')">
+              <i class="bi bi-router" aria-hidden="true"></i>
+              Router
+            </button>
+          </div>
+        }
+
+        <div class="canvas-world" [style.transform]="worldTransform()">
+        <svg class="connections-layer" aria-hidden="true">
+          @for (connection of connections(); track connection.id) {
+            @if (getDevice(connection.sourceId); as source) {
+              @if (getDevice(connection.targetId); as target) {
+                <line
+                  [attr.x1]="source.x"
+                  [attr.y1]="source.y"
+                  [attr.x2]="target.x"
+                  [attr.y2]="target.y"
+                  class="connection-hit-area"
+                  (click)="selectConnection(connection.id, $event)"
+                />
+                <line
+                  [attr.x1]="source.x"
+                  [attr.y1]="source.y"
+                  [attr.x2]="target.x"
+                  [attr.y2]="target.y"
+                  class="connection-line"
+                  [class.selected]="selectedConnectionId() === connection.id"
+                  [class.inactive]="!activeConnectionIds().has(connection.id)"
+                  (click)="selectConnection(connection.id, $event)"
+                />
+              }
+            }
+          }
+        </svg>
+
+        @for (device of devices(); track device.id) {
+          <button
+            type="button"
+            class="device"
+            [attr.data-device-type]="device.type"
+            [class.selected]="selectedDeviceId() === device.id"
+            [class.connection-source]="connectionSourceId() === device.id"
+            [style.left.px]="device.x"
+            [style.top.px]="device.y"
+            [attr.aria-label]="device.name + ', ' + device.type"
+            [attr.aria-pressed]="selectedDeviceId() === device.id"
+            (click)="selectDevice(device); $event.stopPropagation()"
+            (pointerdown)="onDevicePointerDown($event, device)"
+            (contextmenu)="showDeviceDetails(device, $event)"
+          >
+            <i [class]="'device-icon bi ' + getDeviceIcon(device.type)" aria-hidden="true"></i>
+            <span class="device-name">{{ device.name }}</span>
+          </button>
+        }
+
+        @if (devices().length === 0) {
+          <div class="empty-state" aria-hidden="true">
+            <i class="bi bi-diagram-3"></i>
+            <span>La topologia è vuota</span>
+          </div>
+        }
+        </div>
+      </div>
+    </section>
+    @if (detailDevice(); as device) {
+      <app-device-details
+        [device]="device"
+        [saveError]="deviceUpdateError()"
+        [saveSuccess]="deviceUpdateSuccess()"
+        (close)="closeDeviceDetails()"
+        (save)="saveDeviceDetails($event)"
+        (statusChange)="changeDeviceStatus($event)"
+        (draftChanged)="clearDeviceUpdateFeedback()"
+      />
+    }
+  </div>
+</section>
+
+

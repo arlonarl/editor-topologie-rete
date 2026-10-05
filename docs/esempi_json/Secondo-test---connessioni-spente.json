@@ -1,0 +1,60 @@
+{
+  "name": "Secondo test - connessioni spente",
+  "devices": [
+    {
+      "id": 1,
+      "name": "PC-1",
+      "x": 674,
+      "y": 207,
+      "status": "Online",
+      "type": "PC"
+    },
+    {
+      "id": 2,
+      "name": "PC-2",
+      "x": 997,
+      "y": 255,
+      "status": "Online",
+      "type": "PC"
+    },
+    {
+      "id": 3,
+      "name": "Router-3",
+      "x": 825,
+      "y": 323,
+      "status": "Online",
+      "type": "Router"
+    },
+    {
+      "id": 4,
+      "name": "Switch-4",
+      "x": 844,
+      "y": 106.89999389648438,
+      "status": "Offline",
+      "type": "Switch",
+      "portCount": 8
+    }
+  ],
+  "connections": [
+    {
+      "id": 1,
+      "sourceId": 1,
+      "targetId": 3
+    },
+    {
+      "id": 2,
+      "sourceId": 2,
+      "targetId": 3
+    },
+    {
+      "id": 3,
+      "sourceId": 1,
+      "targetId": 4
+    },
+    {
+      "id": 4,
+      "sourceId": 2,
+      "targetId": 4
+    }
+  ]
+}

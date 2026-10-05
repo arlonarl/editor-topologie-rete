@@ -1,0 +1,70 @@
+@if (device(); as currentDevice) {
+    <aside class="device-details" aria-label="Dettagli dispositivo">
+      <header class="details-header">
+        <div>
+          <span class="eyebrow">Dettaglio</span>
+          <h2>{{ currentDevice.name }}</h2>
+        </div>
+  
+        <button type="button" class="icon-button" aria-label="Chiudi dettagli" (click)="close.emit()">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </header>
+  
+      <dl class="details-list">
+        <dt>Tipo</dt>
+        <dd>{{ currentDevice.type }}</dd>
+        <dt>Stato</dt>
+        <dd>{{ currentDevice.status }}</dd>
+      </dl>
+
+      <form class="details-form" #detailsForm="ngForm" (ngSubmit)="onSave()" (input)="draftChanged.emit()">
+        <label>
+          Nome
+          <input type="text" name="name" [(ngModel)]="draft.name" required maxlength="60" />
+        </label>
+
+        <label class="status-toggle">
+          <span class="status-toggle__label">Stato dispositivo</span>
+          <input
+            type="checkbox"
+            name="status"
+            class="status-toggle__input"
+            role="switch"
+            [checked]="draft.status === 'Online'"
+            (change)="onStatusToggle($event)"
+          />
+          <span class="status-toggle__track" aria-hidden="true"></span>
+          <span class="status-toggle__state">{{ draft.status }}</span>
+        </label>
+
+        @switch (currentDevice.type) {
+          @case ('PC') {
+            <label>Indirizzo IP<input type="text" name="ip" [(ngModel)]="draft.ip" /></label>
+            <label>Hostname<input type="text" name="hostname" [(ngModel)]="draft.hostname" /></label>
+            <label>Sistema operativo<input type="text" name="operatingSystem" [(ngModel)]="draft.operatingSystem" /></label>
+          }
+          @case ('Switch') {
+            <label>Indirizzo IP<input type="text" name="ip" [(ngModel)]="draft.ip" /></label>
+            <label>Numero porte<input type="number" name="portCount" [(ngModel)]="draft.portCount" min="1" step="1" /></label>
+            <label>Modello<input type="text" name="model" [(ngModel)]="draft.model" /></label>
+          }
+          @case ('Router') {
+            <label>Indirizzo IP<input type="text" name="ip" [(ngModel)]="draft.ip" /></label>
+            <label>Hostname<input type="text" name="hostname" [(ngModel)]="draft.hostname" /></label>
+            <label>Modello<input type="text" name="model" [(ngModel)]="draft.model" /></label>
+          }
+        }
+
+        @if (saveError(); as error) {
+          <p class="validation-error" role="alert">{{ error }}</p>
+        }
+
+        @if (saveSuccess(); as message) {
+          <p class="save-success" role="status">{{ message }}</p>
+        }
+
+        <button type="submit" [disabled]="detailsForm.invalid || !hasChanges()">Salva modifiche</button>
+      </form>
+    </aside>
+  }

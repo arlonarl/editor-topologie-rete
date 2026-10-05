@@ -1,0 +1,68 @@
+{
+  "name": "Topologia post patch",
+  "devices": [
+    {
+      "id": 1,
+      "name": "PC-1",
+      "x": 365.3999938964844,
+      "y": 69.29998779296875,
+      "status": "Online",
+      "type": "PC"
+    },
+    {
+      "id": 2,
+      "name": "Router-2",
+      "x": 620.1999816894531,
+      "y": 369.29998779296875,
+      "status": "Offline",
+      "type": "Router"
+    },
+    {
+      "id": 3,
+      "name": "PC-3",
+      "x": 878.2570364815848,
+      "y": 65.71430315290179,
+      "status": "Online",
+      "type": "PC"
+    },
+    {
+      "id": 4,
+      "name": "PC-4",
+      "x": 625.7999877929688,
+      "y": 68.81424386160715,
+      "status": "Online",
+      "type": "PC"
+    },
+    {
+      "id": 5,
+      "name": "Switch-5",
+      "x": 511.2000427246094,
+      "y": 205.89999389648438,
+      "status": "Online",
+      "type": "Switch",
+      "portCount": 8
+    }
+  ],
+  "connections": [
+    {
+      "id": 2,
+      "sourceId": 4,
+      "targetId": 5
+    },
+    {
+      "id": 3,
+      "sourceId": 1,
+      "targetId": 5
+    },
+    {
+      "id": 4,
+      "sourceId": 3,
+      "targetId": 2
+    },
+    {
+      "id": 5,
+      "sourceId": 5,
+      "targetId": 2
+    }
+  ]
+}
