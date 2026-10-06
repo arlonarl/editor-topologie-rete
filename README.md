@@ -166,7 +166,9 @@ In ciascuna cartella, `npm run build` compila il relativo progetto. Nel backend,
 
 ## Test
 
-Il frontend usa Vitest tramite il builder di test Angular, con test per servizi, regole della topologia, import/export JSON e componenti dell'editor. Il backend usa Vitest per lo schema Zod, con casi di topologia valida, IP duplicati e superamento delle porte dello switch.
+Il frontend usa Vitest tramite il builder di test Angular, con test per servizi, regole della topologia, import/export JSON e componenti dell'editor. Sono stati corretti i test dell'app e del salvataggio dei dettagli sul canvas, aggiungendo un caso per il nome del dispositivo non valido.
+
+La suite backend è stata ampliata: verifica i vincoli dello schema Zod (campi, IPv4, duplicati, collegamenti e limiti) e le API HTTP Express (health check, CRUD, OpenAPI e gestione degli errori). I test HTTP usano mock della persistenza e non richiedono MongoDB attivo.
 
 ```powershell
 # Dalla cartella principale: test backend
@@ -179,7 +181,11 @@ cd frontend
 npm test -- --watch=false
 ```
 
-Il test del titolo in `app.spec.ts` contiene ancora l'aspettativa iniziale `Hello, frontend`, non coerente con il template attuale. Non sono presenti test d'integrazione delle route con MongoDB.
+## Workflow GitHub Actions
+
+I workflow [Backend tests](.github/workflows/backend-tests.yml) e [Frontend tests](.github/workflows/frontend-tests.yml) si avviano a ogni push, pull request o esecuzione manuale. Su Ubuntu configurano Node.js 22 con cache npm, installano le dipendenze con `npm ci` ed eseguono rispettivamente `npm test` e `npm test -- --watch=false`. Il frontend dispone di un limite di memoria Node.js di 4 GB. Un test fallito fa fallire il relativo controllo.
+
+I workflow nelle cartelle `backend/.github` e `frontend/.github` servono se i due progetti vengono pubblicati come repository separati; nel repository attuale GitHub esegue quelli nella cartella `.github/workflows` alla radice.
 
 ## Aspetti tecnici principali
 
@@ -202,13 +208,13 @@ Il test del titolo in `app.spec.ts` contiene ancora l'aspettativa iniziale `Hell
 - Lo stato `Online`/`Offline` è una proprietà dell'editor: non viene verificata la raggiungibilità di dispositivi reali e non vengono simulati traffico o protocolli di rete.
 - Le modifiche restano in memoria fino al salvataggio o all'esportazione; non è previsto un salvataggio automatico locale.
 - L'URL API è fisso nel client e Docker Compose include soltanto il database.
-- La suite contiene un test del titolo non aggiornato e non copre l'integrazione HTTP/database.
+- I test HTTP del backend usano mock della persistenza: l'integrazione con un database MongoDB reale non è coperta.
 
 ## Possibili sviluppi
 
 - Autenticazione e gestione delle topologie per utente.
 - Configurazione dell'URL API per ambiente e containerizzazione di frontend e backend.
-- Aggiornamento del test del titolo e aggiunta di test d'integrazione delle API con MongoDB.
+- Aggiunta di test d'integrazione delle API con MongoDB reale.
 - Salvataggio di bozze locali e avvisi per le modifiche non salvate.
 
 ## Competenze consolidate

@@ -247,6 +247,12 @@ describe('Canvas', () => {
     const deviceButton: HTMLButtonElement = fixture.nativeElement.querySelector('.device');
     deviceButton.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
     fixture.detectChanges();
+    // NgForm registers its controls asynchronously when the details panel opens.
+    // Wait before editing so initial ngModel values do not overwrite the draft.
+    await fixture.whenStable();
+
+    const saveButton: HTMLButtonElement = fixture.nativeElement.querySelector('.device-details button[type="submit"]');
+    expect(saveButton.disabled).toBe(true);
 
     const nameInput: HTMLInputElement = fixture.nativeElement.querySelector('.device-details [name="name"]');
     nameInput.value = 'Lab PC';
@@ -257,7 +263,6 @@ describe('Canvas', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const saveButton: HTMLButtonElement = fixture.nativeElement.querySelector('.device-details button[type="submit"]');
     expect(saveButton.disabled).toBe(false);
     saveButton.click();
     fixture.detectChanges();
@@ -267,5 +272,24 @@ describe('Canvas', () => {
       name: 'Lab PC',
       ip: '192.168.1.20',
     });
+    expect(saveButton.disabled).toBe(true);
+  });
+
+  it('should keep saving disabled for an invalid device name', async () => {
+    const device = topologyService.addDevice('PC', 40, 50);
+    fixture.componentInstance.detailDeviceId.set(device.id);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const nameInput: HTMLInputElement = fixture.nativeElement.querySelector('.device-details [name="name"]');
+    nameInput.value = '';
+    nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const saveButton: HTMLButtonElement = fixture.nativeElement.querySelector('.device-details button[type="submit"]');
+    expect(saveButton.disabled).toBe(true);
+    saveButton.click();
+    expect(topologyService.devices()[0].name).toBe(device.name);
   });
 });
